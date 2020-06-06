@@ -49,7 +49,7 @@
       <q-card>
         <q-card-section>
           <div class="text-h4">
-            It's a Cat
+            prediction result : {{predictionResult}}
           </div>
         </q-card-section>
         <q-card-actions align="right">
@@ -75,25 +75,32 @@ export default {
       images: [
         'statics/chien.jpg',
         'statics/chat.jpg',
-        'statics/bird.jpg'
+        'statics/bird.jpg',
+        'statics/unkown.jpg'
       ],
       currentIndexOfAnimation: 0,
       showResultDialog: false,
-      showLoading: false
+      showLoading: false,
+      result: -1
     }
   },
   methods: {
+    initializePrediction() {
+      this.currentIndexOfAnimation = 0;
+      this.result = -1;
+    },
     onImageAdded() {
-      console.log('An image has been Added');
+      this.initializePrediction();
       this.statut = "The image has been succesffuly added";
     },
     onImageRemoved() {
-      console.log('An image has been removed');
+      this.initializePrediction();
       this.statut = "To start, please upload a photo";
       this.$refs.fileUploader.reset();
       this.timeToPredict = false;
     },
-    imageUploaded() {
+    imageUploaded(info) {
+      this.result = (info && info.xhr && info.xhr.response) ? info.xhr.response : -1;
       this.statut = 'The image has been successfully uploaded';
       let vm = this;
       api.loading('Chargement en cours');
@@ -105,7 +112,6 @@ export default {
       }, 3000);
     },
     goToPrediction() {
-      console.log('herere');
       const ele = document.getElementById('prediction')
       const target = getScrollTarget(ele);
       const offset = ele.offsetTop - ele.scrollHeight;
@@ -124,7 +130,7 @@ export default {
           vm.launchAnimation(i+1);
         }, 200);
       } else {
-        this.currentIndexOfAnimation = 1;
+        this.currentIndexOfAnimation = this.result;
         this.showLoading = false;
         setTimeout(function () {
           vm.showResultDialog = true;
@@ -134,13 +140,28 @@ export default {
   },
   computed: {
     currentImage() {
-      if (this.currentIndexOfAnimation > 2) {
+      if (this.currentIndexOfAnimation > 3) {
         this.currentIndexOfAnimation = 0;
       }
       return this.images[this.currentIndexOfAnimation];
     },
     imageStatut() {
       return this.statut;
+    },
+    predictionResult() {
+      switch (this.result) {
+        case '0':
+          return 'Dog'
+          break;
+        case '1':
+          return 'Cat'
+          break
+        case '2':
+          return 'parrot'
+        default: return 'Unknown'
+
+      }
+      return this.result;
     },
     providedURL() {
     	return "http://127.0.0.1:5000/upload";
