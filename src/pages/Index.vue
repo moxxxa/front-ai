@@ -164,7 +164,7 @@ export default {
       return this.result;
     },
     providedURL() {
-    	return "http://127.0.0.1:5000/upload";
+    	return "https://server-prediction.azurewebsites.net/upload";
     }
   },
   mounted() {
