@@ -8,7 +8,9 @@
   "author": "souissi",
   "private": true,
   "scripts": {
-    "test": "echo \"No test specified\" && exit 0"
+    "build": "quasar build",
+    "start": "node index.js",
+    "deploy": "now"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
